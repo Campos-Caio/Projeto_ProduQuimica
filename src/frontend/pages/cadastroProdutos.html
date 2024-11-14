@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Produtos</title>
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Estilos personalizados -->
+  <link href="/src/frontend/css/cadastroClientes.css" rel="stylesheet">
+</head>
+<body class="blue lighten-5">
+  <div class="container">
+    <h3 class="center-align blue-text">Cadastro de Produtos</h3>
+
+    <div class="row">
+      <form id="productForm" class="col s12">
+        <input type="hidden" id="productId" name="productId">
+
+        <!-- Campos do Produto -->
+        <div class="input-field col s12">
+          <input id="nome" type="text" name="nome">
+          <label for="nome">Nome do Produto</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="categoria" type="text" name="categoria">
+          <label for="categoria">Categoria</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="marca" type="text" name="marca">
+          <label for="marca">Marca</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="codigo_barra" type="text" name="codigo_barra">
+          <label for="codigo_barra">Código de Barras</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="preco_custo" type="number" name="preco_custo" step="0.01">
+          <label for="preco_custo">Preço de Custo</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="preco_venda" type="number" name="preco_venda" step="0.01">
+          <label for="preco_venda">Preço de Venda</label>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="center-align">
+          <button class="btn waves-effect waves-light blue" type="submit" onclick="addProduct(event)">Cadastrar</button>
+          <button class="btn waves-effect waves-light red" type="reset">Limpar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tabela para Exibição dos Produtos Cadastrados -->
+    <div class="row">
+      <h5 class="blue-text">Produtos Cadastrados</h5>
+      <table class="highlight responsive-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Marca</th>
+            <th>Código de Barras</th>
+            <th>Preço de Custo</th>
+            <th>Preço de Venda</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <!-- Produtos serão exibidos aqui -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- Arquivo JavaScript personalizado -->
+  <script src="../js/cadastroProdutos.js"></script>
+</body>
+</html>

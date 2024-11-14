@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Clientes</title>
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Estilos personalizados -->
+  <link href="/src/frontend/css/cadastroClientes.css" rel="stylesheet">
+</head>
+<body class="blue lighten-5">
+  <div class="container">
+    <h3 class="center-align blue-text">Cadastro de Clientes</h3>
+
+    <div class="row">
+      <form id="clientForm" class="col s12">
+        <input type="hidden" id="clientId" name="clientId">
+        <!-- Tipo de Cliente -->
+        <div class="input-field col s12">
+          <select id="clientType" onchange="toggleFields()">
+            <option value="" disabled selected>Selecione o tipo de cliente</option>
+            <option value="empresa">Empresa</option>
+            <option value="pessoaFisica">Pessoa Física</option>
+          </select>
+          <label>Tipo de Cliente</label>
+        </div>
+
+        <!-- Campos para Empresa -->
+        <div id="empresaFields" style="display: none;">
+          <div class="input-field col s12">
+            <input id="cnpj" type="text" name="cnpj">
+            <label for="cnpj">CNPJ</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="razaoSocial" type="text" name="razaoSocial">
+            <label for="razaoSocial">Razão Social</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="nomeFantasia" type="text" name="nomeFantasia">
+            <label for="nomeFantasia">Nome Fantasia</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="inscricaoEstadual" type="text" name="inscricaoEstadual">
+            <label for="inscricaoEstadual">Inscrição Estadual</label>
+          </div>
+        </div>
+
+        <!-- Campos para Pessoa Física -->
+        <div id="pessoaFisicaFields" style="display: none;">
+          <div class="input-field col s12">
+            <input id="nomeCompleto" type="text" name="nomeCompleto">
+            <label for="nomeCompleto">Nome Completo</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="cpf" type="text" name="cpf">
+            <label for="cpf">CPF</label>
+          </div>
+        </div>
+
+        <!-- Campos Comuns -->
+        <div class="input-field col s12">
+          <input id="endereco" type="text" name="endereco">
+          <label for="endereco">Endereço</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="telefone" type="text" name="telefone">
+          <label for="telefone">Telefone</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="email" type="email" name="email">
+          <label for="email">Email</label>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="center-align">
+          <button class="btn waves-effect waves-light blue" type="submit" onclick="addClient(event)">Cadastrar</button>
+          <button class="btn waves-effect waves-light red" type="reset">Limpar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tabela para Exibição dos Clientes Cadastrados -->
+    <div class="row">
+      <h5 class="blue-text">Clientes Cadastrados</h5>
+      <table class="highlight responsive-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nome/Razão Social</th>
+            <th>CNPJ/CPF</th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="clientTableBody">
+          <!-- Clientes serão exibidos aqui -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- Arquivo JavaScript personalizado -->
+  <script src="../js/cadastroClientes.js"></script>
+</body>
+</html>
