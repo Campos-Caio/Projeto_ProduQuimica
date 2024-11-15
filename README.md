@@ -20,4 +20,6 @@ Filtros e Busca
 
 -- Tecnologias Utilizadas: 
 - Frontend: HTML,CSS
-- Backend: PHP, MySQL. 
+- Backend: PHP, MySQL.
+  
+[diagrama_produquimica.pdf](https://github.com/user-attachments/files/17760025/diagrama_produquimica.pdf)
