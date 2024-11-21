@@ -1,5 +1,5 @@
 <?php
-require_once 'config/datase/database.php'; 
+require_once '../config/database/database.php'; 
 
 class Produto{
     private $connection; 

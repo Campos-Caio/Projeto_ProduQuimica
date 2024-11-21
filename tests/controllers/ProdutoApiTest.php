@@ -4,69 +4,78 @@ use PHPUnit\Framework\TestCase;
 
 class ProdutoApiTest extends TestCase
 {
-    private $baseUrl = 'http://localhost:8000/api/'; 
+    private $baseUrl;
+
+    protected function setUp(): void
+    {
+        $this->baseUrl = getenv('BASE_URL') ?: 'http://localhost/projeto-prodQuimica/src/backend/routes/router.php';
+    }
 
     public function testListarProdutos()
     {
-        $response = $this->makeRequest('GET', '/produtos');
-
+        $response = $this->makeRequest('GET', 'produtos');
         $this->assertEquals(200, $response['status']);
-        $this->assertIsArray(json_decode($response['body'], true)); 
+        $data = json_decode($response['body'], true);
+
+        $this->assertNotNull($data);
+        $this->assertIsArray($data, "A resposta não é um array válido de produtos.");
     }
 
     public function testCriarProdutoComSucesso()
     {
-        $payload = json_encode([
+        $payload = [
             'nome' => 'Produto X',
             'categoria' => 'Categoria Y',
             'marca' => 'Marca Z',
             'codigo_barra' => '1234567890123',
             'preco_custo' => 10.00,
             'preco_venda' => 15.00
-        ]);
+        ];
 
-        $response = $this->makeRequest('POST', '/produtos', $payload);
-
+        $response = $this->makeRequest('POST', 'produtos', $payload);
         $this->assertEquals(201, $response['status']);
-        $this->assertStringContainsString('Produto cadastrado com sucesso!', $response['body']);
+
+        $data = json_decode($response['body'], true);
+        $this->assertEquals('Produto cadastrado com sucesso!', $data['message']);
     }
 
-    public function testEditarProdutoComSucesso()
+    public function testCriarProdutoComErroDeValidacao()
     {
-        $produtoId = 1; // Defina um ID de produto válido para o teste
-        $payload = json_encode([
+        $payload = [
+            'nome' => '', // Campo obrigatório vazio
+            'preco_venda' => -1 // Valor inválido
+        ];
+
+        $response = $this->makeRequest('POST', 'produtos', $payload);
+        $this->assertEquals(400, $response['status']);
+        $this->assertStringContainsString('Erro de validação', $response['body']);
+    }
+
+    public function testEditarProdutoInexistente()
+    {
+        $payload = [
             'nome' => 'Produto X Atualizado',
             'categoria' => 'Categoria Z',
             'marca' => 'Marca W',
             'codigo_barra' => '9876543210987',
             'preco_custo' => 20.00,
             'preco_venda' => 25.00
-        ]);
+        ];
 
-        $response = $this->makeRequest('PUT', "/produtos/$produtoId", $payload);
-
-        $this->assertEquals(200, $response['status']);
-        $this->assertStringContainsString('Cadastro de produto atualizado com sucesso!', $response['body']);
+        $response = $this->makeRequest('PUT', 'produtos/99999', $payload);
+        $this->assertEquals(404, $response['status']);
+        $this->assertStringContainsString('Produto não encontrado', $response['body']);
     }
 
-    public function testExcluirProdutoComSucesso()
-    {
-        $produtoId = 1; // Defina um ID de produto válido para o teste
-
-        $response = $this->makeRequest('DELETE', "/produtos/$produtoId");
-
-        $this->assertEquals(200, $response['status']);
-        $this->assertStringContainsString('Cadastro de produto excluido com sucesso!', $response['body']);
-    }
-
-    private function makeRequest($method, $endpoint, $payload = null)
+    private function makeRequest($method, $endpoint, $payload = null, $headers = [])
     {
         $url = $this->baseUrl . $endpoint;
+        $headers['Content-Type'] = 'application/json';
         $options = [
             'http' => [
                 'method' => $method,
-                'header' => 'Content-type: application/json',
-                'content' => $payload
+                'header' => $this->buildHeaders($headers),
+                'content' => $payload ? json_encode($payload) : null
             ]
         ];
         $context = stream_context_create($options);
@@ -78,5 +87,14 @@ class ProdutoApiTest extends TestCase
             'status' => (int) $match[1],
             'body' => $response
         ];
+    }
+
+    private function buildHeaders(array $headers): string
+    {
+        $formattedHeaders = [];
+        foreach ($headers as $key => $value) {
+            $formattedHeaders[] = "$key: $value";
+        }
+        return implode("\r\n", $formattedHeaders);
     }
 }

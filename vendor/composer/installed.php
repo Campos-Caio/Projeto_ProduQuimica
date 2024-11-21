@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'caioc/projeto-prod-quimica',
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
-        'reference' => 'bdc5b60b6b84f0282df4e24dadae2e7cc5486ff8',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '9ae3143701cbfe7b4882556ddf8711cfb0197f32',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'caioc/projeto-prod-quimica' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => 'bdc5b60b6b84f0282df4e24dadae2e7cc5486ff8',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '9ae3143701cbfe7b4882556ddf8711cfb0197f32',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
