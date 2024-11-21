@@ -1,6 +1,6 @@
 <?php
-
-require_once 'models/Cliente.php'; 
+require_once __DIR__ . "/../config/database/database.php";
+require_once __DIR__ . '/../models/Cliente.php';
 
 class ClienteController {
     private $cliente;

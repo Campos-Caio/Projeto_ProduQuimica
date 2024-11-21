@@ -4,65 +4,81 @@ use PHPUnit\Framework\TestCase;
 
 class ClienteApiTest extends TestCase
 {
-    private $baseUrl = 'http://localhost:8000/api/'; 
+    private $baseUrl;
+
+    protected function setUp(): void
+    {
+        $this->baseUrl = getenv('BASE_URL') ?: 'http://localhost/projeto-prodQuimica/src/backend/routes/router.php';
+    }
 
     public function testListarClientes()
     {
-        $response = $this->makeRequest('GET', '/clientes');
-
+        $response = $this->makeRequest('GET', 'clientes');
         $this->assertEquals(200, $response['status']);
-        $this->assertIsArray(json_decode($response['body'], true)); 
+        $data = json_decode($response['body'], true);
+
+        $this->assertNotNull($data);
+        $this->assertIsArray($data, "A resposta não é um array válido de clientes.");
     }
 
     public function testCriarClienteComSucesso()
     {
-        $payload = json_encode([
+        $payload = [
             'nome' => 'Carlos Silva',
             'email' => 'carlos@example.com',
             'telefone' => '123456789',
             'endereco' => 'Rua A, 123'
-        ]);
+        ];
 
-        $response = $this->makeRequest('POST', '/clientes', $payload);
-
+        $response = $this->makeRequest('POST', 'clientes', $payload);
         $this->assertEquals(201, $response['status']);
-        $this->assertStringContainsString('Cliente cadastrado com sucesso!', $response['body']);
+
+        $data = json_decode($response['body'], true);
+        $this->assertEquals('Cliente cadastrado com sucesso!', $data['message']);
     }
 
-    public function testEditarClienteComSucesso()
+    public function testCriarClienteComErroDeValidacao()
     {
-        $clienteId = 1; // Defina um ID de cliente válido para o teste
-        $payload = json_encode([
+        $payload = [
+            'nome' => '', // Campo obrigatório vazio
+            'email' => 'email_invalido',
+        ];
+
+        $response = $this->makeRequest('POST', 'clientes', $payload);
+        $this->assertEquals(400, $response['status']);
+        $this->assertStringContainsString('Erro de validação', $response['body']);
+    }
+
+    public function testEditarClienteInexistente()
+    {
+        $payload = [
             'nome' => 'Carlos Silva Atualizado',
             'email' => 'carlos.atualizado@example.com',
             'telefone' => '987654321',
             'endereco' => 'Rua B, 456'
-        ]);
+        ];
 
-        $response = $this->makeRequest('PUT', "/clientes/$clienteId", $payload);
-
-        $this->assertEquals(200, $response['status']);
-        $this->assertStringContainsString('Cadastro de cliente atualizado com sucesso!', $response['body']);
+        $response = $this->makeRequest('PUT', 'clientes/99999', $payload);
+        $this->assertEquals(404, $response['status']);
+        $this->assertStringContainsString('Cliente não encontrado', $response['body']);
     }
 
-    public function testExcluirClienteComSucesso()
+    public function testExcluirClienteSemAutenticacao()
     {
-        $clienteId = 1; // Defina um ID de cliente válido para o teste
-
-        $response = $this->makeRequest('DELETE', "/clientes/$clienteId");
-
-        $this->assertEquals(200, $response['status']);
-        $this->assertStringContainsString('Cadastro de cliente excluido com sucesso!', $response['body']);
+        $response = $this->makeRequest('DELETE', 'clientes/1', null, ['Authorization' => '']); // Sem token
+        $this->assertEquals(401, $response['status']);
+        $this->assertStringContainsString('Não autorizado', $response['body']);
     }
 
-    private function makeRequest($method, $endpoint, $payload = null)
+    private function makeRequest($method, $endpoint, $payload = null, $headers = [])
     {
         $url = $this->baseUrl . $endpoint;
+        $headers['Content-Type'] = 'application/json';
         $options = [
             'http' => [
                 'method' => $method,
-                'header' => 'Content-type: application/json',
-                'content' => $payload
+                'header' => $this->buildHeaders($headers),
+                'content' => $payload ? json_encode($payload) : null
             ]
         ];
         $context = stream_context_create($options);
@@ -74,5 +90,14 @@ class ClienteApiTest extends TestCase
             'status' => (int) $match[1],
             'body' => $response
         ];
+    }
+
+    private function buildHeaders(array $headers): string
+    {
+        $formattedHeaders = [];
+        foreach ($headers as $key => $value) {
+            $formattedHeaders[] = "$key: $value";
+        }
+        return implode("\r\n", $formattedHeaders);
     }
 }
